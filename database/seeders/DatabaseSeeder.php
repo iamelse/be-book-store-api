@@ -32,6 +32,7 @@ class DatabaseSeeder extends Seeder
                 'author' => 'Robert C. Martin',
                 'publisher' => 'Prentice Hall',
                 'cover_image' => 'https://images-na.ssl-images-amazon.com/images/I/41xShlnTZTL._SX374_BO1,204,203,200_.jpg',
+                'stock' => 20, // ✅ Tambah stok
             ],
             [
                 'title' => 'Design Patterns: Elements of Reusable Object-Oriented Software',
@@ -41,6 +42,7 @@ class DatabaseSeeder extends Seeder
                 'author' => 'Erich Gamma, Richard Helm, Ralph Johnson, John Vlissides',
                 'publisher' => 'Addison-Wesley',
                 'cover_image' => 'https://m.media-amazon.com/images/I/51kuc0iWo6L._SX376_BO1,204,203,200_.jpg',
+                'stock' => 15, // ✅ Tambah stok
             ],
             [
                 'title' => 'Refactoring: Improving the Design of Existing Code',
@@ -50,6 +52,7 @@ class DatabaseSeeder extends Seeder
                 'author' => 'Martin Fowler',
                 'publisher' => 'Addison-Wesley',
                 'cover_image' => 'https://m.media-amazon.com/images/I/41jEbK-jG+L._SX396_BO1,204,203,200_.jpg',
+                'stock' => 10, // ✅ Tambah stok
             ],
         ];
 
@@ -57,7 +60,7 @@ class DatabaseSeeder extends Seeder
             \App\Models\Product::create($book);
         }
 
-        // Tambah dummy random products
+        // Dummy random products (pake factory, stok otomatis keisi)
         \App\Models\Product::factory(10)->create();
     }
 }

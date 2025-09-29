@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('author')->nullable();
             $table->string('publisher')->nullable();
             $table->string('cover_image')->nullable();
+            $table->integer('stock')->default(0);
             $table->timestamps();
         });
     }

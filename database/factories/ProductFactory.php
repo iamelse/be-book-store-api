@@ -24,6 +24,7 @@ class ProductFactory extends Factory
             'author' => $this->faker->name(),
             'publisher' => $this->faker->company(),
             'cover_image' => $this->faker->imageUrl(200,300,'books'),
+            'stock'       => $this->faker->numberBetween(5, 50),
         ];
     }
 }
