@@ -12,6 +12,10 @@ class Payment extends Model
 
     protected $guarded = ['id'];
 
+    protected $casts = [
+        'meta' => 'array',
+    ];
+
     public function order(): BelongsTo
     {
         return $this->belongsTo(Order::class);

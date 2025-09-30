@@ -23,8 +23,8 @@ class Order extends Model
         return $this->hasMany(OrderItem::class);
     }
 
-    public function payment(): BelongsTo
+    public function payment()
     {
-        return $this->belongsTo(Payment::class);
+        return $this->hasOne(Payment::class);
     }
 }

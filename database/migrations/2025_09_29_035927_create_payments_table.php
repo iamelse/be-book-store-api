@@ -16,7 +16,8 @@ return new class extends Migration
             $table->foreignId('order_id')->constrained()->onDelete('cascade');
             $table->string('gateway')->nullable(); // xendit/doku
             $table->string('transaction_id')->nullable(); // id transaksi dari payment gateway
-            $table->string('status')->default('pending'); // pending, paid, failed
+            $table->string('status')->default('PENDING'); // PENDING, PAID, FAILED
+            $table->text('meta')->nullable();
             $table->timestamp('paid_at')->nullable();
             $table->timestamps();
         });

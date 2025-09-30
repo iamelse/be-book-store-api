@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->string('status')->default('pending'); // pending, paid, canceled
+            $table->string('status')->default('PENDING'); // PENDING, PAID, CANCELED
             $table->integer('total_amount')->default(0);
             $table->text('shipping_address')->nullable();
             $table->string('external_invoice_id')->nullable(); // id invoice dari gateway

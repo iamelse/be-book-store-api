@@ -15,10 +15,16 @@ class CheckoutRepository
             $order = Order::create([
                 'user_id' => $userId,
                 'status'  => 'PENDING',
-                'total'   => 0,
+                'total_amount' => 0, // pakai total_amount, bukan total
+                'external_invoice_id' => 'ORDER-' . uniqid(),
             ]);
 
             $total = 0;
+
+            $order->update([
+                'total_amount' => $total,
+                'external_invoice_id' => 'ORDER-' . $order->id,
+            ]);
 
             foreach ($products as $p) {
                 $product = Product::findOrFail($p['id']);
@@ -41,9 +47,9 @@ class CheckoutRepository
                 $product->decrement('stock', $p['quantity']);
             }
 
-            $order->update(['total' => $total]);
+            $order->update(['total_amount' => $total]); // update total_amount
 
-            return $order;
+            return $order->fresh('items.product', 'payment');
         });
     }
 }

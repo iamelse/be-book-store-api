@@ -7,6 +7,8 @@ use App\Http\Requests\API\PaymentRequest;
 use App\Http\Requests\API\WebhookRequest;
 use App\Services\PaymentService;
 use App\Models\Order;
+use App\Services\MidtransCallbackService;
+use Illuminate\Http\Request;
 
 class PaymentController extends Controller
 {
@@ -39,5 +41,12 @@ class PaymentController extends Controller
         );
 
         return response()->json(['message' => 'Webhook processed']);
+    }
+
+    public function callback(Request $request, MidtransCallbackService $callbackService)
+    {
+        $callbackService->handle($request);
+
+        return response()->json(['message' => 'Callback processed']);
     }
 }
