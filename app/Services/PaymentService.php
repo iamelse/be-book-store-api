@@ -7,20 +7,24 @@ use App\Repositories\PaymentRepository;
 
 class PaymentService
 {
-    private PaymentRepository $paymentRepo;
+    public function __construct(
+        private PaymentRepository $payments,
+        private PaymentGatewayFactory $factory
+    ) {}
 
-    public function __construct(PaymentRepository $paymentRepo)
+    public function initiatePayment(Order $order, string $method): array|object
     {
-        $this->paymentRepo = $paymentRepo;
+        // pilih gateway sesuai method
+        $gateway = $this->factory->make($method);
+
+        return $gateway->createTransaction($order);
     }
 
-    public function initiatePayment(Order $order, string $method)
+    public function handleWebhook(string $orderId, string $status): void
     {
-        return $this->paymentRepo->createPayment($order, $method);
-    }
+        // kalau webhook dari gateway generik (kayak Xendit yang cuma kasih status)
+        $order = Order::findOrFail($orderId);
 
-    public function handleWebhook(int $orderId, string $status): void
-    {
-        $this->paymentRepo->updatePaymentStatus($orderId, $status);
+        $this->payments->updatePaymentStatus($order->id, $status);
     }
 }

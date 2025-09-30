@@ -4,9 +4,8 @@ namespace App\Services;
 
 use App\Repositories\CheckoutRepository;
 use App\Repositories\PaymentRepository;
-use App\Services\MidtransService;
 use App\Models\Order;
-use Illuminate\Support\Facades\Log;
+use App\Services\Gateways\MidtransGatewayService;
 use Illuminate\Support\Facades\DB;
 
 class CheckoutService
@@ -14,7 +13,7 @@ class CheckoutService
     public function __construct(
         private CheckoutRepository $checkoutRepo,
         private PaymentRepository $paymentRepo,
-        private MidtransService $midtrans
+        private MidtransGatewayService $midtrans
     ) {}
 
     public function checkout(int $userId, array $products): Order

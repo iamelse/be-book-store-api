@@ -7,8 +7,9 @@ use App\Http\Requests\API\PaymentRequest;
 use App\Http\Requests\API\WebhookRequest;
 use App\Services\PaymentService;
 use App\Models\Order;
-use App\Services\MidtransCallbackService;
+use App\Services\PaymentGatewayFactory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class PaymentController extends Controller
 {
@@ -25,7 +26,10 @@ class PaymentController extends Controller
                     ->where('user_id', $request->user()->id)
                     ->firstOrFail();
 
-        $payment = $this->paymentService->initiatePayment($order, $request->validated()['method']);
+        $payment = $this->paymentService->initiatePayment(
+            $order,
+            $request->validated()['method'] // bisa 'midtrans', 'xendit', dll
+        );
 
         return response()->json([
             'message' => 'Payment initiated',
@@ -43,9 +47,16 @@ class PaymentController extends Controller
         return response()->json(['message' => 'Webhook processed']);
     }
 
-    public function callback(Request $request, MidtransCallbackService $callbackService)
+    public function callback(Request $request)
     {
-        $callbackService->handle($request);
+        // log semua payload dari Midtrans
+        Log::info('Midtrans webhook received', [
+            'payload' => $request->all(),
+            'headers' => $request->headers->all(),
+        ]);
+
+        $gateway = app(PaymentGatewayFactory::class)->make('MIDTRANS');
+        $gateway->handleCallback($request->all());
 
         return response()->json(['message' => 'Callback processed']);
     }
