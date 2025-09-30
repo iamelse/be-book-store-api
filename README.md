@@ -88,7 +88,7 @@ Karena keterbatasan resource (tidak menggunakan hosting berbayar), webhook Midtr
    Gunakan URL ngrok untuk setting **Notification URL** di Midtrans Dashboard.  
    Contoh:
    ```
-   https://random.ngrok.io/api/payment/webhook
+   https://random.ngrok.io/api/midtrans/callback
    ```
 
 ---
