@@ -17,7 +17,7 @@ class OrderResource extends JsonResource
                 'gateway'        => $this->payment->gateway ?? null,
                 'status'         => $this->payment->status ?? null,
                 'transaction_id' => $this->payment->transaction_id ?? null,
-                'paid_at'        => $this->payment->paid_at?->toDateTimeString(),
+                'paid_at'        => $this->payment->paid_at,
                 'meta'           => $this->payment->meta ?? null,
             ],
         ];
