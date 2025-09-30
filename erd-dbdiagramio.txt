@@ -1,0 +1,54 @@
+Table users {
+  id bigint [pk, increment]
+  name varchar
+  email varchar [unique]
+  password varchar
+  access_key varchar [unique] // untuk auth di header
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table products {
+  id bigint [pk, increment]
+  title varchar
+  description text
+  price int // simpan harga dalam satuan kecil (mis: rupiah)
+  isbn varchar
+  author varchar
+  publisher varchar
+  cover_image varchar
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table orders {
+  id bigint [pk, increment]
+  user_id bigint [ref: > users.id]
+  status varchar // pending, paid, canceled
+  total_amount int
+  shipping_address text
+  external_invoice_id varchar // id invoice dari payment gateway
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table order_items {
+  id bigint [pk, increment]
+  order_id bigint [ref: > orders.id]
+  product_id bigint [ref: > products.id]
+  quantity int
+  price int // harga snapshot saat order dibuat
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table payments {
+  id bigint [pk, increment]
+  order_id bigint [ref: > orders.id]
+  gateway varchar // xendit/doku
+  transaction_id varchar // id transaksi dari payment gateway
+  status varchar // pending, paid, failed
+  paid_at timestamp
+  created_at timestamp
+  updated_at timestamp
+}
