@@ -1,0 +1,33 @@
+app/
+├── Http/
+│   ├── Controllers/
+│   │   ├── AuthController.php
+│   │   ├── ItemController.php
+│   │   ├── CartController.php
+│   │   ├── OrderController.php
+│   │   └── PaymentController.php
+│   └── Requests/
+│       ├── RegisterRequest.php
+│       ├── LoginRequest.php
+│       ├── CartItemRequest.php
+│       └── PaymentRequest.php
+├── Models/
+│   ├── User.php
+│   ├── Item.php
+│   ├── Cart.php
+│   ├── CartItem.php
+│   ├── Order.php
+│   ├── OrderItem.php
+│   └── Payment.php
+├── Repositories/
+│   ├── AuthRepository.php
+│   ├── ItemRepository.php
+│   ├── CartRepository.php
+│   ├── OrderRepository.php
+│   └── PaymentRepository.php
+└── Services/
+    ├── AuthService.php
+    ├── ItemService.php
+    ├── CartService.php
+    ├── OrderService.php
+    └── PaymentService.php
