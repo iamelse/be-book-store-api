@@ -20,9 +20,8 @@ class AuthService
     public function register(array $data)
     {
         $data['role'] = $data['role'] ?? RoleEnum::CUSTOMER;
-        $user = $this->authRepository->createUser($data);
-
-        return $this->successResponse($user, 'User registered successfully', 201);
+        
+        return $this->authRepository->createUser($data);
     }
 
     public function login(array $credentials)
