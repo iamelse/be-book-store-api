@@ -30,7 +30,7 @@ class AuthService
         $token = $this->authRepository->findUserByCredentials($credentials);
 
         if (!$token) {
-            throw new \Exception('Invalid credentials');
+            return null;
         }
 
         return $this->authRepository->respondWithToken($token);
