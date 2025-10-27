@@ -21,18 +21,33 @@ class OrderRequest extends FormRequest
      */
     public function rules(): array
     {
+        $path = $this->path();
+
         switch ($this->method()) {
             case 'POST':
-                // Membuat pesanan baru
+                if (str_contains($path, 'orders/from-cart')) {
+                    return [
+                        'address' => 'nullable|string|max:255',
+                    ];
+                }
+
+                if (str_contains($path, 'items/') && str_contains($path, '/order')) {
+                    return [
+                        'address' => 'nullable|string|max:255',
+                        'quantity' => 'required|integer|min:1',
+                    ];
+                }
+
+                // Default (fallback)
                 return [
-                    'address' => 'required|string|max:255',
+                    'address' => 'nullable|string|max:255',
                 ];
 
             case 'PUT':
             case 'PATCH':
-                // Update status pesanan (admin)
                 return [
                     'status' => 'required|string|in:pending,processing,completed,cancelled',
+                    'quantity' => 'integer|min:1',
                 ];
 
             default:

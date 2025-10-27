@@ -30,7 +30,7 @@ class XenditGateway implements PaymentGatewayInterface
             ];
 
             $invoice = $this->invoiceApi->createInvoice($invoiceRequest);
-
+            
             return [
                 'status' => 'pending',
                 'invoice_url' => $invoice['invoice_url'] ?? null,

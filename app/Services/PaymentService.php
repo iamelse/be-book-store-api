@@ -32,6 +32,7 @@ class PaymentService
             throw new Exception("Order {$order->id} sudah dibayar.");
         }
 
+        // Return existing pending payment
         $existingPayment = $this->paymentRepo->findPendingByOrder($order->id, $gateway);
         if ($existingPayment) {
             return [
@@ -40,31 +41,36 @@ class PaymentService
             ];
         }
 
-        $amount = $order->total_amount;
-
         $externalId = 'INV-' . now()->format('YmdHis') . '-' . strtoupper(Str::random(6));
         $paymentReference = $externalId;
+        $amount = $order->total_amount;
 
-        $payment = $this->paymentRepo->create([
-            'order_id' => $order->id,
-            'gateway' => $gateway,
-            'external_id' => $externalId,
-            'payment_reference' => $paymentReference,
-            'amount' => $amount,
-            'status' => 'pending',
+        $options = array_merge($options, [
+            'customer_name'  => $order->user->name ?? 'Customer',
+            'customer_email' => $order->user->email ?? 'customer@example.com',
         ]);
 
         try {
-            $customerData = [
-                'customer_name'  => $order->user->name ?? 'Customer',
-                'customer_email' => $order->user->email ?? 'customer@example.com',
-            ];
-
-            $options = array_merge($options, $customerData);
-
             $gatewayService = $this->gateways[$gateway];
             $response = $gatewayService->createPayment($externalId, $amount, $options);
 
+            // pastikan array untuk konsistensi
+            $response = json_decode(json_encode($response), true);
+
+            $paymentUrl = $this->extractPaymentUrl($gateway, $response);
+
+            // Simpan payment ke DB
+            $payment = $this->paymentRepo->create([
+                'order_id' => $order->id,
+                'gateway' => $gateway,
+                'external_id' => $externalId,
+                'payment_reference' => $paymentReference,
+                'payment_url' => $paymentUrl,
+                'amount' => $amount,
+                'status' => 'pending',
+            ]);
+
+            // Update meta response
             $this->paymentRepo->updateStatus($paymentReference, 'pending', $response);
 
             return [
@@ -74,10 +80,22 @@ class PaymentService
         } catch (Exception $e) {
             Log::error("Payment creation failed for {$gateway}: {$e->getMessage()}", [
                 'order_id' => $orderId,
-                'gateway' => $gateway
+                'gateway' => $gateway,
             ]);
             throw new Exception("Payment creation failed for {$gateway}");
         }
+    }
+
+    /**
+     * Extract payment_url from gateway response
+     */
+    protected function extractPaymentUrl(string $gateway, array $response): ?string
+    {
+        return match(strtolower($gateway)) {
+            'midtrans' => $response['midtrans_response']['redirect_url'] ?? $response['payment_url'] ?? null,
+            'xendit'   => $response['invoice_url'] ?? $response['meta']['invoice_url'] ?? null,
+            default    => $response['payment_url'] ?? null,
+        };
     }
 
     /**
@@ -86,27 +104,16 @@ class PaymentService
     public function handleWebhook(string $gateway, array $payload): void
     {
         $this->ensureGatewayExists($gateway);
-        $gatewayService = $this->gateways[$gateway];
 
+        $gatewayService = $this->gateways[$gateway];
         $paymentReference = $gatewayService->getPaymentReferenceFromPayload($payload);
         $status = $gatewayService->getStatusFromPayload($payload);
 
-        $paymentMethod = null;
-        switch ($gateway) {
-            case 'midtrans':
-                $paymentMethod = $payload['payment_type'] ?? null;
-                break;
-
-            case 'xendit':
-                $paymentMethod = $payload['payment_method']
-                    ?? $payload['channel_code']
-                    ?? null;
-                break;
-
-            default:
-                $paymentMethod = $payload['payment_method'] ?? null;
-                break;
-        }
+        $paymentMethod = match($gateway) {
+            'midtrans' => $payload['payment_type'] ?? null,
+            'xendit'   => $payload['payment_method'] ?? $payload['channel_code'] ?? null,
+            default    => $payload['payment_method'] ?? null,
+        };
 
         $meta = array_merge($payload, ['payment_method' => $paymentMethod]);
 
@@ -125,9 +132,7 @@ class PaymentService
         $successStatuses = ['success', 'paid', 'settled', 'settlement', 'completed'];
 
         if (in_array(strtolower($status), $successStatuses)) {
-            $payment->order()->update([
-                'status' => 'paid',
-            ]);
+            $payment->order()->update(['status' => 'paid']);
             $this->logInfo("Order updated to PAID for payment_reference: {$paymentReference}");
         } else {
             $this->logInfo("Payment status not successful yet: {$status}");
@@ -149,10 +154,5 @@ class PaymentService
     private function logWarning(string $message, array $context = []): void
     {
         Log::warning($message, $context);
-    }
-
-    private function logError(string $message, Exception $e, array $context = []): void
-    {
-        Log::error($message . ': ' . $e->getMessage(), $context);
     }
 }

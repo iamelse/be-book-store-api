@@ -13,32 +13,15 @@ return new class extends Migration
     {
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
-            
-            // ID unik yang dikirim ke gateway (kamu yang generate)
             $table->string('external_id')->nullable()->unique(); 
-            
-            // ID referensi transaksi dari gateway (mis. transaction_id / payment_id)
             $table->string('payment_reference')->nullable()->unique();
-
-            // Relasi ke orders
+            $table->text('payment_url')->nullable();
             $table->foreignId('order_id')->constrained()->onDelete('cascade');
-            
-            // Nama gateway yang digunakan
-            $table->string('gateway'); // 'midtrans', 'xendit', dll
-            
-            // Jenis metode pembayaran (opsional tapi berguna)
-            $table->string('payment_method')->nullable(); // 'BCA_VA', 'QRIS', 'CARD', etc.
-
-            // Jumlah pembayaran dalam Rupiah
+            $table->string('gateway');
+            $table->string('payment_method')->nullable();
             $table->integer('amount');
-            
-            // Status pembayaran
-            $table->string('status')->default('pending'); // pending, success, failed, refunded
-            
-            // Data mentah dari API gateway
+            $table->string('status')->default('pending');
             $table->json('meta')->nullable();
-
-            // Timestamp created_at dan updated_at
             $table->timestamps();
         });
     }
