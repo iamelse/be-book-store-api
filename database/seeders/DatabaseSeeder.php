@@ -27,6 +27,7 @@ class DatabaseSeeder extends Seeder
             'role' => RoleEnum::ADMIN,
         ]);
 
+        $this->call(ItemCategorySeeder::class);
         $this->call(ItemSeeder::class);
     }
 }

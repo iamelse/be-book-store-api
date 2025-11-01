@@ -12,6 +12,11 @@ class Item extends Model
 
     protected $guarded = ['id'];
 
+    public function category()
+    {
+        return $this->belongsTo(ItemCategory::class);
+    }
+
     public function cartItems(): HasMany
     {
         return $this->hasMany(CartItem::class);
