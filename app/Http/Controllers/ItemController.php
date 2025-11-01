@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Resources\ItemResource;
 use App\Services\ItemService;
 use App\Traits\ApiResponse;
+use Illuminate\Http\Request;
 
 class ItemController extends Controller
 {
@@ -17,9 +18,16 @@ class ItemController extends Controller
         $this->itemService = $itemService;
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $items = $this->itemService->getAllItems();
+        $params = [
+            'limit' => $request->get('limit', 10),
+            'search' => $request->get('search'),
+            'filters' => $request->only(['item_category_id']),
+            'sort' => $request->get('sort', 'id:asc')
+        ];
+
+        $items = $this->itemService->getAllItems($params);
 
         return $this->successResponse(
             ItemResource::collection($items),

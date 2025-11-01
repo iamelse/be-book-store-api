@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Models\Item;
 use App\Repositories\ItemRepository;
-use Illuminate\Database\Eloquent\Collection;
 
 class ItemService
 {
@@ -15,9 +14,9 @@ class ItemService
         $this->itemRepository = $itemRepository;
     }
 
-    public function getAllItems(): Collection
+    public function getAllItems(array $params)
     {
-        return $this->itemRepository->getAllItems();
+        return $this->itemRepository->getAllItems($params);
     }
 
     public function getItemById(int $id): ?Item
