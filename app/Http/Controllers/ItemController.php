@@ -35,9 +35,9 @@ class ItemController extends Controller
         );
     }
 
-    public function show($id)
+    public function show($slug)
     {
-        $item = $this->itemService->getItemById($id);
+        $item = $this->itemService->getItemBySlug($slug);
 
         if (!$item) {
             return $this->errorResponse('Item not found', 404);

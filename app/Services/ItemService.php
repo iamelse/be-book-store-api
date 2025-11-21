@@ -23,4 +23,9 @@ class ItemService
     {
         return $this->itemRepository->getItemById($id);
     }
+
+    public function getItemBySlug(string $slug): ?Item
+    {
+        return $this->itemRepository->getItemBySlug($slug);
+    }
 }

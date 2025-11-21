@@ -12,6 +12,11 @@ class Item extends Model
 
     protected $guarded = ['id'];
 
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
+    }
+
     public function category()
     {
         return $this->belongsTo(ItemCategory::class, 'item_category_id');

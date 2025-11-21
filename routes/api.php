@@ -22,7 +22,7 @@ Route::prefix('v1')->group(function () {
     });
 
     Route::get('items', [ItemController::class, 'index']);
-    Route::get('items/{id}', [ItemController::class, 'show']);
+    Route::get('items/{slug}', [ItemController::class, 'show']);
 
     Route::middleware(['auth:api', 'role:' . RoleEnum::CUSTOMER])->group(function () {
         Route::post('items/{productId}/order', [OrderController::class, 'storeFromProduct']);

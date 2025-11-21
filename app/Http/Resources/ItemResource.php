@@ -14,9 +14,11 @@ class ItemResource extends JsonResource
             'category' => $this->category ? [
                 'id' => $this->category->id,
                 'name' => $this->category->name,
+                'slug' => $this->category->slug,
                 'description' => $this->category->description,
             ] : null,
             'title' => $this->title,
+            'slug' => $this->slug,
             'author' => $this->author,
             'description' => $this->description,
             'price' => $this->price,

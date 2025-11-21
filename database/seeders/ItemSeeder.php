@@ -21,6 +21,7 @@ class ItemSeeder extends Seeder
         for ($i = 0; $i < 50; $i++) {
             $items[] = [
                 'title' => $faker->sentence(3), // Membuat judul buku acak (3 kata)
+                'slug' => $faker->unique()->slug(), // Membuat slug unik
                 'author' => $faker->name(), // Membuat nama penulis acak
                 'description' => $faker->paragraph(2), // Membuat deskripsi acak (2 paragraf)
                 'price' => $faker->numberBetween(50000, 200000), // Membuat harga acak antara 50,000 dan 200,000

@@ -46,4 +46,9 @@ class ItemRepository
     {
         return Item::with('category')->find($id);
     }
+
+    public function getItemBySlug(string $slug): ?Item
+    {
+        return Item::with('category')->where('slug', $slug)->first();
+    }
 }
