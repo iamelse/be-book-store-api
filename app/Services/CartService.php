@@ -50,6 +50,24 @@ class CartService
         return $cartItem->load('item');
     }
 
+    public function updateQuantity($userId, $cartItemId, $quantity)
+    {
+        $cartItem = CartItem::with('item', 'cart')->findOrFail($cartItemId);
+
+        if ($cartItem->cart->user_id !== $userId) {
+            throw new Exception("Kamu tidak punya izin untuk update item ini.");
+        }
+
+        // cek stok
+        if ($quantity > $cartItem->item->stock) {
+            throw new Exception("Quantity melebihi stock. Stock tersedia: {$cartItem->item->stock}");
+        }
+
+        $cartItem = $this->cartRepo->updateQuantity($cartItemId, $quantity);
+
+        return $cartItem->load('item');
+    }
+
     public function removeItemFromCart($cartItemId)
     {
         try {

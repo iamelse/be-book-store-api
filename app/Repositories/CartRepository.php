@@ -42,6 +42,19 @@ class CartRepository
         });
     }
 
+    public function updateQuantity($cartItemId, $quantity)
+    {
+        return DB::transaction(function () use ($cartItemId, $quantity) {
+            $cartItem = CartItem::findOrFail($cartItemId);
+
+            $cartItem->update([
+                'quantity' => $quantity
+            ]);
+
+            return $cartItem;
+        });
+    }
+
     public function removeItem($cartItemId)
     {
         $userId = Auth::id();

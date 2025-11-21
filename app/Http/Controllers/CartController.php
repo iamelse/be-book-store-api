@@ -47,6 +47,23 @@ class CartController extends Controller
         }
     }
 
+    public function update(CartItemRequest $request, $cartItemId)
+    {
+        try {
+            $cartItem = $this->cartService->updateQuantity(
+                Auth::id(),
+                $cartItemId,
+                $request->quantity
+            );
+
+            return $this->successResponse($cartItem, 'Cart item updated successfully');
+        } catch (ModelNotFoundException $e) {
+            return $this->errorResponse('Cart item not found', 404, ['error' => $e->getMessage()]);
+        } catch (Exception $e) {
+            return $this->errorResponse('Failed to update cart item', 500, ['error' => $e->getMessage()]);
+        }
+    }
+
     public function remove($cartItemId)
     {
         try {
