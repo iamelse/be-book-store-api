@@ -399,9 +399,20 @@
                     {
                         "name": "sort",
                         "in": "query",
+                        "description": "Sort by field and direction: field:asc|desc",
                         "schema": {
                             "type": "string",
-                            "example": "price:desc"
+                            "enum": [
+                                "id:asc",
+                                "id:desc",
+                                "price:asc",
+                                "price:desc",
+                                "created_at:asc",
+                                "created_at:desc",
+                                "updated_at:asc",
+                                "updated_at:desc"
+                            ],
+                            "example": "created_at:desc"
                         }
                     }
                 ],
@@ -411,7 +422,37 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/ItemCollectionResponse"
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Items fetched successfully"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "items": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/Item"
+                                                    }
+                                                },
+                                                "filters_used": {
+                                                    "type": "object"
+                                                },
+                                                "links": {
+                                                    "type": "object"
+                                                },
+                                                "meta": {
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
                                 }
                             }
                         }
@@ -433,17 +474,28 @@
                         "required": true,
                         "schema": {
                             "type": "string",
-                            "example": "harry-potter"
+                            "example": "sample-book"
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Success",
+                        "description": "Item fetched successfully",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/ItemResponse"
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean"
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Item"
+                                        }
+                                    },
+                                    "type": "object"
                                 }
                             }
                         }
@@ -765,94 +817,6 @@
                     "updated_at": {
                         "type": "string",
                         "format": "date-time"
-                    }
-                },
-                "type": "object"
-            },
-            "ItemPaginationMeta": {
-                "properties": {
-                    "current_page": {
-                        "type": "integer"
-                    },
-                    "last_page": {
-                        "type": "integer"
-                    },
-                    "per_page": {
-                        "type": "integer"
-                    },
-                    "total": {
-                        "type": "integer"
-                    }
-                },
-                "type": "object"
-            },
-            "ItemPaginationLinks": {
-                "properties": {
-                    "first": {
-                        "type": "string"
-                    },
-                    "last": {
-                        "type": "string"
-                    },
-                    "prev": {
-                        "type": "string",
-                        "nullable": true
-                    },
-                    "next": {
-                        "type": "string",
-                        "nullable": true
-                    }
-                },
-                "type": "object"
-            },
-            "ItemData": {
-                "properties": {
-                    "items": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/Item"
-                        }
-                    },
-                    "filters_used": {
-                        "type": "object"
-                    },
-                    "links": {
-                        "$ref": "#/components/schemas/ItemPaginationLinks"
-                    },
-                    "meta": {
-                        "$ref": "#/components/schemas/ItemPaginationMeta"
-                    }
-                },
-                "type": "object"
-            },
-            "ItemCollectionResponse": {
-                "properties": {
-                    "success": {
-                        "type": "boolean",
-                        "example": true
-                    },
-                    "message": {
-                        "type": "string",
-                        "example": "Items fetched successfully"
-                    },
-                    "data": {
-                        "$ref": "#/components/schemas/ItemData"
-                    }
-                },
-                "type": "object"
-            },
-            "ItemResponse": {
-                "properties": {
-                    "success": {
-                        "type": "boolean",
-                        "example": true
-                    },
-                    "message": {
-                        "type": "string",
-                        "example": "Item fetched successfully"
-                    },
-                    "data": {
-                        "$ref": "#/components/schemas/Item"
                     }
                 },
                 "type": "object"

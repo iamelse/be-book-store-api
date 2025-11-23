@@ -33,49 +33,6 @@ use OpenApi\Annotations as OA;
  *     @OA\Property(property="created_at", type="string", format="date-time"),
  *     @OA\Property(property="updated_at", type="string", format="date-time")
  * )
- *
- * @OA\Schema(
- *     schema="ItemPaginationMeta",
- *     type="object",
- *     @OA\Property(property="current_page", type="integer"),
- *     @OA\Property(property="last_page", type="integer"),
- *     @OA\Property(property="per_page", type="integer"),
- *     @OA\Property(property="total", type="integer")
- * )
- *
- * @OA\Schema(
- *     schema="ItemPaginationLinks",
- *     type="object",
- *     @OA\Property(property="first", type="string"),
- *     @OA\Property(property="last", type="string"),
- *     @OA\Property(property="prev", type="string", nullable=true),
- *     @OA\Property(property="next", type="string", nullable=true)
- * )
- *
- * @OA\Schema(
- *     schema="ItemData",
- *     type="object",
- *     @OA\Property(property="items", type="array", @OA\Items(ref="#/components/schemas/Item")),
- *     @OA\Property(property="filters_used", type="object"),
- *     @OA\Property(property="links", ref="#/components/schemas/ItemPaginationLinks"),
- *     @OA\Property(property="meta", ref="#/components/schemas/ItemPaginationMeta")
- * )
- *
- * @OA\Schema(
- *     schema="ItemCollectionResponse",
- *     type="object",
- *     @OA\Property(property="success", type="boolean", example=true),
- *     @OA\Property(property="message", type="string", example="Items fetched successfully"),
- *     @OA\Property(property="data", ref="#/components/schemas/ItemData")
- * )
- *
- * @OA\Schema(
- *     schema="ItemResponse",
- *     type="object",
- *     @OA\Property(property="success", type="boolean", example=true),
- *     @OA\Property(property="message", type="string", example="Item fetched successfully"),
- *     @OA\Property(property="data", ref="#/components/schemas/Item")
- * )
  */
 
 class ItemController extends Controller
@@ -94,19 +51,43 @@ class ItemController extends Controller
      *     path="/api/v1/items",
      *     summary="Get paginated list of items",
      *     tags={"Items"},
-     *
      *     @OA\Parameter(name="limit", in="query", @OA\Schema(type="integer", example=10)),
      *     @OA\Parameter(name="page", in="query", @OA\Schema(type="integer", example=1)),
      *     @OA\Parameter(name="search", in="query", @OA\Schema(type="string", example="Harry Potter")),
      *     @OA\Parameter(name="category", in="query", @OA\Schema(type="string", example="finance")),
      *     @OA\Parameter(name="min_price", in="query", @OA\Schema(type="integer", example=10000)),
      *     @OA\Parameter(name="max_price", in="query", @OA\Schema(type="integer", example=50000)),
-     *     @OA\Parameter(name="sort", in="query", @OA\Schema(type="string", example="price:desc")),
-     *
+     *     @OA\Parameter(
+     *         name="sort",
+     *         in="query",
+     *         description="Sort by field and direction: field:asc|desc",
+     *         @OA\Schema(
+     *             type="string",
+     *             example="created_at:desc",
+     *             enum={
+     *                 "id:asc","id:desc",
+     *                 "price:asc","price:desc",
+     *                 "created_at:asc","created_at:desc",
+     *                 "updated_at:asc","updated_at:desc"
+     *             }
+     *         )
+     *     ),
      *     @OA\Response(
      *         response=200,
      *         description="Items fetched successfully",
-     *         @OA\JsonContent(ref="#/components/schemas/ItemCollectionResponse")
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Items fetched successfully"),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 @OA\Property(property="items", type="array", @OA\Items(ref="#/components/schemas/Item")),
+     *                 @OA\Property(property="filters_used", type="object"),
+     *                 @OA\Property(property="links", type="object"),
+     *                 @OA\Property(property="meta", type="object")
+     *             )
+     *         )
      *     )
      * )
      */
@@ -114,7 +95,7 @@ class ItemController extends Controller
     {
         $params = [
             'limit'   => $request->get('limit', 10),
-            'filters' => $request->except(['page', 'limit', 'sort']),
+            'filters' => $request->except(['page', 'limit']),
             'sort'    => $request->get('sort', 'id:asc'),
         ];
 
@@ -129,9 +110,26 @@ class ItemController extends Controller
      *     path="/api/v1/items/{slug}",
      *     summary="Get a single item by slug",
      *     tags={"Items"},
-     *     @OA\Parameter(name="slug", in="path", required=true, @OA\Schema(type="string", example="harry-potter")),
-     *     @OA\Response(response=200, description="Success", @OA\JsonContent(ref="#/components/schemas/ItemResponse")),
-     *     @OA\Response(response=404, description="Item not found")
+     *     @OA\Parameter(
+     *         name="slug",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="string", example="sample-book")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Item fetched successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="success", type="boolean"),
+     *             @OA\Property(property="message", type="string"),
+     *             @OA\Property(property="data", ref="#/components/schemas/Item")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Item not found"
+     *     )
      * )
      */
     public function show(string $slug)

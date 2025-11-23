@@ -29,4 +29,18 @@ class ItemFilter extends QueryFilter
     {
         $query->where('price', '<=', $value);
     }
+
+    public function sort($query, $sort)
+    {
+        [$field, $direction] = explode(':', $sort) + [null, 'asc'];
+
+        $allowedSortFields = ['id', 'price', 'created_at', 'updated_at'];
+        if (!in_array($field, $allowedSortFields)) {
+            $field = 'id';
+        }
+
+        $direction = strtolower($direction) === 'desc' ? 'desc' : 'asc';
+
+        $query->orderBy($field, $direction);
+    }
 }
