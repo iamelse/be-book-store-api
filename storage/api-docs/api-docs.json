@@ -1,0 +1,891 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Bookify API Documentation",
+        "description": "API documentation for Bookify application",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/v1/auth/register": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Register a new account",
+                "description": "Register a new user",
+                "operationId": "48e49e48019e8b141753cb515a26100b",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "email",
+                                    "password",
+                                    "password_confirmation"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "John Doe"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "example": "john@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "password123"
+                                    },
+                                    "password_confirmation": {
+                                        "type": "string",
+                                        "example": "password123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "User registered successfully"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/login": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Login user & generate JWT token",
+                "description": "Login and retrieve token",
+                "operationId": "5db09a35f965c6ca7529ed3c3cae8e21",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "example": "john@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "password123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Login successful"
+                    },
+                    "401": {
+                        "description": "Invalid credentials"
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/me": {
+            "get": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Get authenticated user",
+                "description": "Get authenticated user info",
+                "operationId": "1e5f382ba4fa0960d233875cab75a361",
+                "responses": {
+                    "200": {
+                        "description": "Authenticated user"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/auth/refresh": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Refresh authentication token",
+                "description": "Refresh JWT token",
+                "operationId": "05bd0482845348cafa4da9e4fb7d0ffb",
+                "responses": {
+                    "200": {
+                        "description": "Token refreshed successfully"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/auth/logout": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Logout current user & invalidate token",
+                "description": "Logout user",
+                "operationId": "8f1a443d39c3bf383f851fbb51253c64",
+                "responses": {
+                    "200": {
+                        "description": "Successfully logged out"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "api/v1/cart": {
+            "get": {
+                "tags": [
+                    "Cart"
+                ],
+                "summary": "Get cart items",
+                "operationId": "99e8fa0c034e65022c9a17f8dd482239",
+                "responses": {
+                    "200": {
+                        "description": "Cart retrieved successfully"
+                    },
+                    "500": {
+                        "description": "Failed to retrieve cart"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Cart"
+                ],
+                "summary": "Add item to cart",
+                "operationId": "b2555d7a608ef198b003cee0178ccc09",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "item_id",
+                                    "quantity"
+                                ],
+                                "properties": {
+                                    "item_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "quantity": {
+                                        "type": "integer",
+                                        "example": 2
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Item added to cart successfully"
+                    },
+                    "404": {
+                        "description": "Item not found"
+                    },
+                    "500": {
+                        "description": "Failed to add item to cart"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Cart"
+                ],
+                "summary": "Clear all items in cart",
+                "operationId": "3ae68ec9d7f5d556d24cd97d5e24f3f8",
+                "responses": {
+                    "200": {
+                        "description": "Cart cleared successfully"
+                    },
+                    "500": {
+                        "description": "Failed to clear cart"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "api/v1/cart/{cartItemId}": {
+            "put": {
+                "tags": [
+                    "Cart"
+                ],
+                "summary": "Update cart item quantity",
+                "operationId": "3cf77dc96c71d828d3d40993cb0ee21f",
+                "parameters": [
+                    {
+                        "name": "cartItemId",
+                        "in": "path",
+                        "description": "ID of cart item",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 5
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "quantity"
+                                ],
+                                "properties": {
+                                    "quantity": {
+                                        "type": "integer",
+                                        "example": 3
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Cart item updated successfully"
+                    },
+                    "404": {
+                        "description": "Cart item not found"
+                    },
+                    "500": {
+                        "description": "Failed to update cart item"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Cart"
+                ],
+                "summary": "Remove item from cart",
+                "operationId": "f7333bcd9fe87b2d2748a3c0196a6ebf",
+                "parameters": [
+                    {
+                        "name": "cartItemId",
+                        "in": "path",
+                        "description": "ID of cart item",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 5
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Item removed from cart successfully"
+                    },
+                    "404": {
+                        "description": "Cart item not found"
+                    },
+                    "500": {
+                        "description": "Failed to remove item from cart"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/items": {
+            "get": {
+                "tags": [
+                    "Items"
+                ],
+                "summary": "Get paginated list of items",
+                "operationId": "5561acef6e4aef27354515aca3069b72",
+                "parameters": [
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "example": 10
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "schema": {
+                            "type": "string",
+                            "example": "Harry Potter"
+                        }
+                    },
+                    {
+                        "name": "category",
+                        "in": "query",
+                        "schema": {
+                            "type": "string",
+                            "example": "finance"
+                        }
+                    },
+                    {
+                        "name": "min_price",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "example": 10000
+                        }
+                    },
+                    {
+                        "name": "max_price",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "example": 50000
+                        }
+                    },
+                    {
+                        "name": "sort",
+                        "in": "query",
+                        "schema": {
+                            "type": "string",
+                            "example": "price:desc"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Items fetched successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ItemCollectionResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/items/{slug}": {
+            "get": {
+                "tags": [
+                    "Items"
+                ],
+                "summary": "Get a single item by slug",
+                "operationId": "1cb5c1319b9351252ea50088b4ecb27b",
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "harry-potter"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ItemResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Item not found"
+                    }
+                }
+            }
+        },
+        "api/v1/orders": {
+            "get": {
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Get authenticated user's orders",
+                "operationId": "4f617f816f32634763e46b43b0e3196c",
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved orders"
+                    },
+                    "500": {
+                        "description": "Failed to retrieve orders"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Create order from cart",
+                "operationId": "e032b6008e87019ee904853c7a70a9f7",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "address"
+                                ],
+                                "properties": {
+                                    "address": {
+                                        "type": "string",
+                                        "example": "Jl. Sudirman No. 123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Order created successfully from cart"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "api/v1/items/{productId}/order": {
+            "post": {
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Create order directly from a product",
+                "operationId": "bf807119588d0793f8dd4e01cf99a014",
+                "parameters": [
+                    {
+                        "name": "productId",
+                        "in": "path",
+                        "description": "Product ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "quantity"
+                                ],
+                                "properties": {
+                                    "quantity": {
+                                        "type": "integer",
+                                        "example": 2
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Order created successfully"
+                    },
+                    "404": {
+                        "description": "Product not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "api/v1/orders/{orderId}": {
+            "get": {
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Get detail of a single authenticated user order",
+                "operationId": "ffefad90cc26273c1e794421ee685433",
+                "parameters": [
+                    {
+                        "name": "orderId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "order-12345"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Order details fetched successfully"
+                    },
+                    "404": {
+                        "description": "Order not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "api/v1/payments": {
+            "post": {
+                "tags": [
+                    "Payments"
+                ],
+                "summary": "Create a payment request for an order",
+                "operationId": "ea58c183f7c6e4817c3a6700f9b2e4e4",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "order_id",
+                                    "gateway"
+                                ],
+                                "properties": {
+                                    "order_id": {
+                                        "type": "string",
+                                        "example": "order-23091"
+                                    },
+                                    "gateway": {
+                                        "type": "string",
+                                        "example": "midtrans"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Payment created successfully"
+                    },
+                    "500": {
+                        "description": "Failed to create payment"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "api/v1/payments/webhook/midtrans": {
+            "post": {
+                "tags": [
+                    "Payments"
+                ],
+                "summary": "Handle Midtrans webhook",
+                "operationId": "528b900ecd5bb4dba0295dfa4bd1fb95",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {},
+                            "example": {
+                                "transaction_status": "settlement",
+                                "order_id": "order-23091"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Webhook processed successfully"
+                    },
+                    "500": {
+                        "description": "Webhook processing error"
+                    }
+                }
+            }
+        },
+        "api/v1/payments/webhook/xendit": {
+            "post": {
+                "tags": [
+                    "Payments"
+                ],
+                "summary": "Handle Xendit webhook",
+                "operationId": "55ab2aa55940050e1c9c813e2d0720be",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {},
+                            "example": {
+                                "status": "PAID",
+                                "order_id": "order-23091"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Webhook processed successfully"
+                    },
+                    "500": {
+                        "description": "Webhook processing error"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Category": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 5
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Finance"
+                    },
+                    "slug": {
+                        "type": "string",
+                        "example": "finance"
+                    },
+                    "description": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "Item": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "category": {
+                        "$ref": "#/components/schemas/Category"
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "Sample Book Title"
+                    },
+                    "slug": {
+                        "type": "string",
+                        "example": "sample-book"
+                    },
+                    "author": {
+                        "type": "string",
+                        "example": "John Doe"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "price": {
+                        "type": "number",
+                        "example": 120000
+                    },
+                    "stock": {
+                        "type": "integer",
+                        "example": 10
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "ItemPaginationMeta": {
+                "properties": {
+                    "current_page": {
+                        "type": "integer"
+                    },
+                    "last_page": {
+                        "type": "integer"
+                    },
+                    "per_page": {
+                        "type": "integer"
+                    },
+                    "total": {
+                        "type": "integer"
+                    }
+                },
+                "type": "object"
+            },
+            "ItemPaginationLinks": {
+                "properties": {
+                    "first": {
+                        "type": "string"
+                    },
+                    "last": {
+                        "type": "string"
+                    },
+                    "prev": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "next": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "ItemData": {
+                "properties": {
+                    "items": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Item"
+                        }
+                    },
+                    "filters_used": {
+                        "type": "object"
+                    },
+                    "links": {
+                        "$ref": "#/components/schemas/ItemPaginationLinks"
+                    },
+                    "meta": {
+                        "$ref": "#/components/schemas/ItemPaginationMeta"
+                    }
+                },
+                "type": "object"
+            },
+            "ItemCollectionResponse": {
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Items fetched successfully"
+                    },
+                    "data": {
+                        "$ref": "#/components/schemas/ItemData"
+                    }
+                },
+                "type": "object"
+            },
+            "ItemResponse": {
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Item fetched successfully"
+                    },
+                    "data": {
+                        "$ref": "#/components/schemas/Item"
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "bearerFormat": "JWT",
+                "scheme": "bearer"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Auth",
+            "description": "Authentication Endpoints"
+        },
+        {
+            "name": "Cart",
+            "description": "Cart"
+        },
+        {
+            "name": "Items",
+            "description": "Items"
+        },
+        {
+            "name": "Orders",
+            "description": "Orders"
+        },
+        {
+            "name": "Payments",
+            "description": "Payments"
+        }
+    ]
+}

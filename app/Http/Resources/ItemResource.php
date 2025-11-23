@@ -25,6 +25,10 @@ class ItemResource extends JsonResource
             'stock' => $this->stock,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+            'meta' => [
+                'timestamp'    => now()->toISOString(),
+                'request_id'   => request()->header('X-Request-ID') ?? uniqid(),
+            ]
         ];
     }
 }

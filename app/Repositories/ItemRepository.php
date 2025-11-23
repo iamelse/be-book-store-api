@@ -2,44 +2,21 @@
 
 namespace App\Repositories;
 
+use App\Filters\ItemFilter;
 use App\Models\Item;
 
 class ItemRepository
 {
     public function getAllItems(array $params)
     {
-        $limit = $params['limit'] ?? 10;
-        $search = $params['search'] ?? null;
-        $filters = $params['filters'] ?? [];
-        $sort = $params['sort'] ?? 'id:asc';
-
         $query = Item::with('category');
 
-        // Search
-        if ($search) {
-            $query->where(function ($q) use ($search) {
-                $q->where('title', 'LIKE', "%{$search}%")
-                ->orWhere('author', 'LIKE', "%{$search}%")
-                ->orWhere('description', 'LIKE', "%{$search}%");
-            });
-        }
+        (new ItemFilter)->apply($query, $params['filters'] ?? []);
 
-        // Filters
-        foreach ($filters as $field => $value) {
-            if (!is_null($value)) {
-                $query->where($field, $value);
-            }
-        }
+        [$sortBy, $sortOrder] = explode(':', $params['sort'] ?? 'id:asc');
+        $query->orderBy($sortBy, $sortOrder === 'desc' ? 'desc' : 'asc');
 
-        // Sorting
-        [$sortBy, $sortOrder] = explode(':', $sort) + [null, null];
-        $allowedSorts = ['id', 'title', 'author', 'created_at'];
-
-        if (in_array($sortBy, $allowedSorts)) {
-            $query->orderBy($sortBy, $sortOrder === 'desc' ? 'desc' : 'asc');
-        }
-
-        return $query->paginate($limit);
+        return $query->paginate($params['limit'] ?? 10);
     }
 
     public function getItemById($id)

@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Exception;
+use OpenApi\Annotations as OA;
 
 class OrderController extends Controller
 {
@@ -21,7 +22,20 @@ class OrderController extends Controller
     }
 
     /**
-     * Menampilkan daftar pesanan user yang sedang login
+     * @OA\Get(
+     *     path="api/v1/orders",
+     *     summary="Get authenticated user's orders",
+     *     security={{"bearerAuth":{}}},
+     *     tags={"Orders"},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successfully retrieved orders"
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Failed to retrieve orders"
+     *     )
+     * )
      */
     public function index()
     {
@@ -41,7 +55,34 @@ class OrderController extends Controller
     }
 
     /**
-     * Membuat pesanan langsung dari produk (tanpa cart)
+     * @OA\Post(
+     *     path="api/v1/items/{productId}/order",
+     *     summary="Create order directly from a product",
+     *     security={{"bearerAuth":{}}},
+     *     tags={"Orders"},
+     *     @OA\Parameter(
+     *         name="productId",
+     *         in="path",
+     *         required=true,
+     *         description="Product ID",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"quantity"},
+     *             @OA\Property(property="quantity", type="integer", example=2)
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Order created successfully"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Product not found"
+     *     )
+     * )
      */
     public function storeFromProduct(OrderRequest $request, $productId)
     {
@@ -74,7 +115,23 @@ class OrderController extends Controller
     }
 
     /**
-     * Membuat pesanan baru dari keranjang
+     * @OA\Post(
+     *     path="api/v1/orders",
+     *     summary="Create order from cart",
+     *     security={{"bearerAuth":{}}},
+     *     tags={"Orders"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"address"},
+     *             @OA\Property(property="address", type="string", example="Jl. Sudirman No. 123")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Order created successfully from cart"
+     *     )
+     * )
      */
     public function storeFromCart(OrderRequest $request)
     {
@@ -107,7 +164,26 @@ class OrderController extends Controller
     }
 
     /**
-     * Menampilkan detail pesanan tertentu
+     * @OA\Get(
+     *     path="api/v1/orders/{orderId}",
+     *     summary="Get detail of a single authenticated user order",
+     *     security={{"bearerAuth":{}}},
+     *     tags={"Orders"},
+     *     @OA\Parameter(
+     *         name="orderId",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="string", example="order-12345")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Order details fetched successfully"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Order not found"
+     *     )
+     * )
      */
     public function show($orderId)
     {

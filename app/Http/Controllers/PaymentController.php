@@ -8,6 +8,7 @@ use Illuminate\Http\JsonResponse;
 use App\Http\Resources\PaymentResource;
 use App\Http\Requests\CreatePaymentRequest;
 use Illuminate\Http\Request;
+use OpenApi\Annotations as OA;
 
 class PaymentController extends Controller
 {
@@ -19,7 +20,28 @@ class PaymentController extends Controller
     }
 
     /**
-     * Create a payment for an order
+     * @OA\Post(
+     *     path="api/v1/payments",
+     *     summary="Create a payment request for an order",
+     *     tags={"Payments"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"order_id", "gateway"},
+     *             @OA\Property(property="order_id", type="string", example="order-23091"),
+     *             @OA\Property(property="gateway", type="string", example="midtrans")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Payment created successfully"
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Failed to create payment"
+     *     )
+     * )
      */
     public function create(CreatePaymentRequest $request): JsonResponse
     {
@@ -53,7 +75,25 @@ class PaymentController extends Controller
     }
 
     /**
-     * Handle Midtrans webhook
+     * @OA\Post(
+     *     path="api/v1/payments/webhook/midtrans",
+     *     summary="Handle Midtrans webhook",
+     *     tags={"Payments"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             example={"transaction_status": "settlement", "order_id": "order-23091"}
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Webhook processed successfully"
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Webhook processing error"
+     *     )
+     * )
      */
     public function webhookMidtrans(Request $request): JsonResponse
     {
@@ -61,7 +101,25 @@ class PaymentController extends Controller
     }
 
     /**
-     * Handle Xendit webhook
+     * @OA\Post(
+     *     path="api/v1/payments/webhook/xendit",
+     *     summary="Handle Xendit webhook",
+     *     tags={"Payments"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             example={"status": "PAID", "order_id": "order-23091"}
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Webhook processed successfully"
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Webhook processing error"
+     *     )
+     * )
      */
     public function webhookXendit(Request $request): JsonResponse
     {

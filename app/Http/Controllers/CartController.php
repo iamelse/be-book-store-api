@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Traits\APIResponse;
+use OpenApi\Annotations as OA;
 
 class CartController extends Controller
 {
@@ -20,6 +21,22 @@ class CartController extends Controller
         $this->cartService = $cartService;
     }
 
+    /**
+     * @OA\Get(
+     *     path="api/v1/cart",
+     *     summary="Get cart items",
+     *     tags={"Cart"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Cart retrieved successfully"
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Failed to retrieve cart"
+     *     )
+     * )
+     */
     public function index()
     {
         try {
@@ -30,6 +47,34 @@ class CartController extends Controller
         }
     }
 
+    /**
+     * @OA\Post(
+     *     path="api/v1/cart",
+     *     summary="Add item to cart",
+     *     tags={"Cart"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"item_id", "quantity"},
+     *             @OA\Property(property="item_id", type="integer", example=1),
+     *             @OA\Property(property="quantity", type="integer", example=2)
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Item added to cart successfully"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Item not found"
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Failed to add item to cart"
+     *     )
+     * )
+     */
     public function add(CartItemRequest $request)
     {
         try {
@@ -47,6 +92,40 @@ class CartController extends Controller
         }
     }
 
+    /**
+     * @OA\Put(
+     *     path="api/v1/cart/{cartItemId}",
+     *     summary="Update cart item quantity",
+     *     tags={"Cart"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="cartItemId",
+     *         in="path",
+     *         required=true,
+     *         description="ID of cart item",
+     *         @OA\Schema(type="integer", example=5)
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"quantity"},
+     *             @OA\Property(property="quantity", type="integer", example=3)
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Cart item updated successfully"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Cart item not found"
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Failed to update cart item"
+     *     )
+     * )
+     */
     public function update(CartItemRequest $request, $cartItemId)
     {
         try {
@@ -64,6 +143,33 @@ class CartController extends Controller
         }
     }
 
+    /**
+     * @OA\Delete(
+     *     path="api/v1/cart/{cartItemId}",
+     *     summary="Remove item from cart",
+     *     tags={"Cart"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="cartItemId",
+     *         in="path",
+     *         required=true,
+     *         description="ID of cart item",
+     *         @OA\Schema(type="integer", example=5)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Item removed from cart successfully"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Cart item not found"
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Failed to remove item from cart"
+     *     )
+     * )
+     */
     public function remove($cartItemId)
     {
         try {
@@ -76,6 +182,22 @@ class CartController extends Controller
         }
     }
 
+    /**
+     * @OA\Delete(
+     *     path="api/v1/cart",
+     *     summary="Clear all items in cart",
+     *     tags={"Cart"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Cart cleared successfully"
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Failed to clear cart"
+     *     )
+     * )
+     */
     public function clear()
     {
         try {
