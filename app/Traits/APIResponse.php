@@ -4,7 +4,7 @@ namespace App\Traits;
 
 use Illuminate\Http\JsonResponse;
 
-trait ApiResponse
+trait APIResponse
 {
     public static function successResponse($data = null, string $message = 'Success', int $status = 200): JsonResponse
     {
@@ -21,6 +21,7 @@ trait ApiResponse
             'success' => false,
             'message' => $message,
             'errors'  => $errors,
+            'status'  => $status,
             'meta' => [
                 'timestamp'    => now()->toISOString(),
                 'request_id'   => request()->header('X-Request-ID') ?? uniqid(),

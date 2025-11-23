@@ -3,9 +3,6 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Contracts\Validation\Validator;
-use Illuminate\Http\Exceptions\HttpResponseException;
-use App\Traits\APIResponse;
 
 class CartItemRequest extends FormRequest
 {
@@ -32,19 +29,5 @@ class CartItemRequest extends FormRequest
             default:
                 return [];
         }
-    }
-
-    /**
-     * Handle a failed validation attempt.
-     */
-    protected function failedValidation(Validator $validator): void
-    {
-        throw new HttpResponseException(
-            APIResponse::errorResponse(
-                'Validation failed', 
-                422, 
-                $validator->errors()->toArray()
-            )
-        );
     }
 }
