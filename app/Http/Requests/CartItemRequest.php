@@ -34,10 +34,17 @@ class CartItemRequest extends FormRequest
         }
     }
 
+    /**
+     * Handle a failed validation attempt.
+     */
     protected function failedValidation(Validator $validator): void
     {
         throw new HttpResponseException(
-            APIResponse::errorResponse('Validation failed', 422, $validator->errors()->toArray())
+            APIResponse::errorResponse(
+                'Validation failed', 
+                422, 
+                $validator->errors()->toArray()
+            )
         );
     }
 }

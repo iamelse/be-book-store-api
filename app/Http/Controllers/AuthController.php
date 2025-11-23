@@ -15,6 +15,17 @@ use OpenApi\Annotations as OA;
  *     name="Auth",
  *     description="Authentication Endpoints"
  * )
+ *
+ * @OA\Schema(
+ *     schema="User",
+ *     type="object",
+ *     @OA\Property(property="id", type="integer", example=1),
+ *     @OA\Property(property="name", type="string", example="John Doe"),
+ *     @OA\Property(property="email", type="string", example="john@example.com"),
+ *     @OA\Property(property="role", type="string", example="customer"),
+ *     @OA\Property(property="created_at", type="string", format="date-time"),
+ *     @OA\Property(property="updated_at", type="string", format="date-time")
+ * )
  */
 class AuthController extends Controller
 {
@@ -26,8 +37,6 @@ class AuthController extends Controller
     }
 
     /**
-     * Register a new user
-     *
      * @OA\Post(
      *     path="/api/v1/auth/register",
      *     tags={"Auth"},
@@ -42,8 +51,18 @@ class AuthController extends Controller
      *             @OA\Property(property="password_confirmation", type="string", example="password123")
      *         )
      *     ),
-     *     @OA\Response(response=201, description="User registered successfully"),
-     *     @OA\Response(response=422, description="Validation error")
+     *     @OA\Response(
+     *         response=201,
+     *         description="User registered successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="User registered successfully"),
+     *             @OA\Property(property="data", ref="#/components/schemas/User")
+     *         )
+     *     ),
+     *     @OA\Response(response=422, description="Validation error"),
+     *     @OA\Header(header="Content-Type", description="application/json", required=true),
+     *     @OA\Header(header="Accept", description="application/json", required=true)
      * )
      */
     public function register(RegisterRequest $request): JsonResponse
@@ -53,8 +72,6 @@ class AuthController extends Controller
     }
 
     /**
-     * Login and retrieve token
-     *
      * @OA\Post(
      *     path="/api/v1/auth/login",
      *     tags={"Auth"},
@@ -67,8 +84,18 @@ class AuthController extends Controller
      *             @OA\Property(property="password", type="string", example="password123")
      *         )
      *     ),
-     *     @OA\Response(response=200, description="Login successful"),
-     *     @OA\Response(response=401, description="Invalid credentials")
+     *     @OA\Response(
+     *         response=200,
+     *         description="Login successful",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Login successful"),
+     *             @OA\Property(property="data", type="object", example={"access_token":"token_string","token_type":"bearer","expires_in":3600})
+     *         )
+     *     ),
+     *     @OA\Response(response=401, description="Invalid credentials"),
+     *     @OA\Header(header="Content-Type", description="application/json", required=true),
+     *     @OA\Header(header="Accept", description="application/json", required=true)
      * )
      */
     public function login(LoginRequest $request): JsonResponse
@@ -83,14 +110,21 @@ class AuthController extends Controller
     }
 
     /**
-     * Get authenticated user info
-     *
      * @OA\Get(
      *     path="/api/v1/auth/me",
      *     tags={"Auth"},
      *     summary="Get authenticated user",
      *     security={{"bearerAuth":{}}},
-     *     @OA\Response(response=200, description="Authenticated user")
+     *     @OA\Response(
+     *         response=200,
+     *         description="Authenticated user",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Authenticated user"),
+     *             @OA\Property(property="data", ref="#/components/schemas/User")
+     *         )
+     *     ),
+     *     @OA\Header(header="Accept", description="application/json", required=true)
      * )
      */
     public function me(): JsonResponse
@@ -99,14 +133,21 @@ class AuthController extends Controller
     }
 
     /**
-     * Refresh JWT token
-     *
      * @OA\Post(
      *     path="/api/v1/auth/refresh",
      *     tags={"Auth"},
      *     summary="Refresh authentication token",
      *     security={{"bearerAuth":{}}},
-     *     @OA\Response(response=200, description="Token refreshed successfully")
+     *     @OA\Response(
+     *         response=200,
+     *         description="Token refreshed successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Token refreshed successfully"),
+     *             @OA\Property(property="data", type="object", example={"access_token":"token_string","token_type":"bearer","expires_in":3600})
+     *         )
+     *     ),
+     *     @OA\Header(header="Accept", description="application/json", required=true)
      * )
      */
     public function refresh(): JsonResponse
@@ -115,14 +156,21 @@ class AuthController extends Controller
     }
 
     /**
-     * Logout user
-     *
      * @OA\Post(
      *     path="/api/v1/auth/logout",
      *     tags={"Auth"},
      *     summary="Logout current user & invalidate token",
      *     security={{"bearerAuth":{}}},
-     *     @OA\Response(response=200, description="Successfully logged out")
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successfully logged out",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Successfully logged out"),
+     *             @OA\Property(property="data", type="null")
+     *         )
+     *     ),
+     *     @OA\Header(header="Accept", description="application/json", required=true)
      * )
      */
     public function logout(): JsonResponse

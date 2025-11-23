@@ -3,6 +3,9 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Http\Exceptions\HttpResponseException;
+use App\Traits\APIResponse;
 
 class CreatePaymentRequest extends FormRequest
 {
@@ -25,5 +28,19 @@ class CreatePaymentRequest extends FormRequest
             'gateway' => 'required|string|in:xendit,midtrans',
             'order_id' => 'required|integer|exists:orders,id',
         ];
+    }
+
+    /**
+     * Handle a failed validation attempt.
+     */
+    protected function failedValidation(Validator $validator): void
+    {
+        throw new HttpResponseException(
+            APIResponse::errorResponse(
+                'Validation failed', 
+                422, 
+                $validator->errors()->toArray()
+            )
+        );
     }
 }
