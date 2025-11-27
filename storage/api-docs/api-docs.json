@@ -445,6 +445,111 @@
                 ]
             }
         },
+        "/api/v1/categories": {
+            "get": {
+                "tags": [
+                    "Categories"
+                ],
+                "summary": "Get all categories",
+                "operationId": "d9bf255011b42d56bf306832dc3366c8",
+                "responses": {
+                    "200": {
+                        "description": "Categories fetched successfully"
+                    }
+                }
+            }
+        },
+        "/api/v1/categories/{slug}": {
+            "get": {
+                "tags": [
+                    "Categories"
+                ],
+                "summary": "Get category details",
+                "operationId": "fca2b079b114ee7f94b7e549ba1db3a1",
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "finance"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Category fetched successfully"
+                    }
+                }
+            }
+        },
+        "/api/v1/categories/{slug}/items": {
+            "get": {
+                "tags": [
+                    "Categories"
+                ],
+                "summary": "Get category details + items in category",
+                "operationId": "904d0aeff85737d9818f739c9da4eb7e",
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "example": 10
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "min_price",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "max_price",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "sort",
+                        "in": "query",
+                        "schema": {
+                            "type": "string",
+                            "example": "created_at:desc"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Category items fetched successfully"
+                    }
+                }
+            }
+        },
         "/api/v1/items": {
             "get": {
                 "tags": [
@@ -972,6 +1077,10 @@
         {
             "name": "Cart",
             "description": "Cart"
+        },
+        {
+            "name": "Categories",
+            "description": "Categories"
         },
         {
             "name": "Items",

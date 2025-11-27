@@ -3,6 +3,7 @@
 use App\Enums\RoleEnum;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
@@ -23,6 +24,10 @@ Route::prefix('v1')->group(function () {
 
     Route::get('items', [ItemController::class, 'index']);
     Route::get('items/{slug}', [ItemController::class, 'show']);
+
+    Route::get('/categories', [CategoryController::class, 'index']);
+    Route::get('/categories/{slug}', [CategoryController::class, 'show']);
+    Route::get('/categories/{slug}/items', [CategoryController::class, 'showWithItems']);
 
     Route::middleware(['auth:api', 'role:' . RoleEnum::CUSTOMER])->group(function () {
         Route::post('items/{productId}/order', [OrderController::class, 'storeFromProduct']);
