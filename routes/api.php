@@ -36,6 +36,7 @@ Route::prefix('v1')->group(function () {
         Route::post('cart/items', [CartController::class, 'add']);
         Route::put('cart/items/{id}', [CartController::class, 'update']);
         Route::delete('cart/items/{id}', [CartController::class, 'remove']);
+        Route::delete('/cart/multiple', [CartController::class, 'removeMultiple']);
 
         Route::post('orders/from-cart', [OrderController::class, 'storeFromCart']);
         Route::get('orders', [OrderController::class, 'index']);

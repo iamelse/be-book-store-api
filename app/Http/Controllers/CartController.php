@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Traits\APIResponse;
+use Illuminate\Http\Request;
 use OpenApi\Annotations as OA;
 
 class CartController extends Controller
@@ -179,6 +180,55 @@ class CartController extends Controller
             return $this->errorResponse('Cart item not found', 404, ['error' => $e->getMessage()]);
         } catch (Exception $e) {
             return $this->errorResponse('Failed to remove item from cart', 500, ['error' => $e->getMessage()]);
+        }
+    }
+
+    /**
+     * @OA\Delete(
+     *     path="api/v1/cart/multiple",
+     *     summary="Remove multiple items from cart",
+     *     tags={"Cart"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"cart_item_ids"},
+     *             @OA\Property(
+     *                 property="cart_item_ids",
+     *                 type="array",
+     *                 @OA\Items(type="integer"),
+     *                 example={1, 2, 3}
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Items removed successfully"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Cart item not found"
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Failed to remove items from cart"
+     *     )
+     * )
+     */
+    public function removeMultiple(Request $request)
+    {
+        $request->validate([
+            'cart_item_ids' => 'required|array',
+            'cart_item_ids.*' => 'integer|distinct',
+        ]);
+
+        try {
+            $this->cartService->removeMultipleItemsFromCart($request->cart_item_ids);
+            return $this->successResponse([], 'Items removed successfully');
+        } catch (ModelNotFoundException $e) {
+            return $this->errorResponse('Some cart items not found', 404, ['error' => $e->getMessage()]);
+        } catch (Exception $e) {
+            return $this->errorResponse('Failed to remove items from cart', 500, ['error' => $e->getMessage()]);
         }
     }
 

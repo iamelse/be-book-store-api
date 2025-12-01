@@ -79,6 +79,17 @@ class CartService
         }
     }
 
+    public function removeMultipleItemsFromCart(array $cartItemIds)
+    {
+        $deletedCount = $this->cartRepo->removeMultipleItem($cartItemIds);
+
+        if ($deletedCount === 0) {
+            throw new ModelNotFoundException("No cart items found for deletion");
+        }
+
+        return true;
+    }
+
     public function clearCart($userId)
     {
         try {

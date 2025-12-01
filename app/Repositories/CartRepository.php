@@ -72,6 +72,11 @@ class CartRepository
         return true;
     }
 
+    public function removeMultipleItem(array $cartItemIds)
+    {
+        return CartItem::whereIn('id', $cartItemIds)->delete();
+    }
+
     public function clearCart($userId)
     {
         $cart = $this->getActiveCart($userId);
