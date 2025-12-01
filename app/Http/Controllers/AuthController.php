@@ -93,7 +93,7 @@ class AuthController extends Controller
      *             @OA\Property(property="data", type="object", example={"access_token":"token_string","token_type":"bearer","expires_in":3600})
      *         )
      *     ),
-     *     @OA\Response(response=401, description="Invalid credentials"),
+     *     @OA\Response(response=401, description="Kombinasi email atau kata sandi Anda salah!"),
      *     @OA\Header(header="Content-Type", description="application/json", required=true),
      *     @OA\Header(header="Accept", description="application/json", required=true)
      * )
@@ -103,7 +103,7 @@ class AuthController extends Controller
         $tokenData = $this->authService->login($request->validated());
 
         if (!$tokenData) {
-            return APIResponse::errorResponse('Invalid credentials', 401, [], 'UNAUTHORIZED');
+            return APIResponse::errorResponse('Kombinasi email atau kata sandi Anda salah!', 401, [], 'UNAUTHORIZED');
         }
 
         return APIResponse::successResponse($tokenData, 'Login successful');
